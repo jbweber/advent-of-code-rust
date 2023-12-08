@@ -1,18 +1,44 @@
 fn main() {
-  let sample = include_str!("input.txt");
+  let input = include_str!("input.txt");
+  let result = part1(input);
 
-  let result: u32 = sample
-    .trim()
-    .split("\n")
-    .map(|l| {
-      let digits = l.chars().filter(|c| c.is_digit(10)).collect::<Vec<_>>();
-      let first = digits.first().unwrap();
-      let last = digits.last().unwrap();
-      let num = format!("{}{}", first, last);
+  println!("{}", result);
+}
 
-      num.parse::<u32>().unwrap()
+// .inspect dbg!
+
+fn part1(input: &str) -> String {
+  let output: u32 = input
+    .lines()
+    .map(|line| {
+      let mut it = line.chars().filter_map(|character| {
+        character.to_digit(10)
+      });
+
+      let first = it.next().expect("should be a number");
+      let last = it.last();
+
+      match last {
+        None => first * 10 + first,
+        Some(num) => first * 10 + num
+      }
     })
     .sum();
 
-  println!("{}", result);
+  output.to_string()
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_part1() {
+    let input = "1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet";
+
+    assert_eq!("142", part1(input));
+  }
 }
